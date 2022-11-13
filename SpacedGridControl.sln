@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32922.545
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpacedGridControl", "SpacedGridControl\SpacedGridControl.csproj", "{6EF23E37-D24B-4442-A1AA-F0E712E971B7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpacedGridControl.Demo", "SpacedGridControl.Demo\SpacedGridControl.Demo.csproj", "{3FD97099-95B4-49A6-B4C5-983F730E15D5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6EF23E37-D24B-4442-A1AA-F0E712E971B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6EF23E37-D24B-4442-A1AA-F0E712E971B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6EF23E37-D24B-4442-A1AA-F0E712E971B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6EF23E37-D24B-4442-A1AA-F0E712E971B7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3FD97099-95B4-49A6-B4C5-983F730E15D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3FD97099-95B4-49A6-B4C5-983F730E15D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3FD97099-95B4-49A6-B4C5-983F730E15D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3FD97099-95B4-49A6-B4C5-983F730E15D5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F5F72BC9-0255-45F6-8969-9B2868361902}
+	EndGlobalSection
+EndGlobal

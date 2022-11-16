@@ -15,9 +15,12 @@
 		<PackageIcon>Icon.png</PackageIcon>
 	</PropertyGroup>
 	<ItemGroup>
-	  <None Update="Icon\Icon.png">
+	  <None Remove="Icon\Icon.png" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Content Include="Icon\Icon.png">
 	    <Pack>True</Pack>
 	    <PackagePath>\</PackagePath>
-	  </None>
+	  </Content>
 	</ItemGroup>
 </Project>

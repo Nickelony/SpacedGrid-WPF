@@ -11,10 +11,13 @@
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<RepositoryUrl>https://github.com/Nickelony/SpacedGrid-WPF</RepositoryUrl>
 		<PackageTags>wpf grid spacing spaced layout</PackageTags>
-		<Version>1.0.1</Version>
-		<ApplicationIcon>Icon.ico</ApplicationIcon>
+		<Version>1.0.2</Version>
+		<PackageIcon>Icon.png</PackageIcon>
 	</PropertyGroup>
 	<ItemGroup>
-	  <Content Include="Icon.ico" />
+	  <None Update="Icon\Icon.png">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
 	</ItemGroup>
 </Project>

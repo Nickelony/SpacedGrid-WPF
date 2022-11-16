@@ -1,6 +1,5 @@
 ﻿using SpacedGridControl.Definitions;
 using SpacedGridControl.Interfaces;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -27,6 +26,22 @@ namespace SpacedGridControl
 			set => SetValue(ColumnSpacingProperty, value);
 		}
 
+		/// <summary>
+		/// Returns an enumerable of all the grid's row definitions, <u>excluding</u> spacing rows.
+		/// </summary>
+		public IEnumerable<RowDefinition> UserDefinedRowDefinitions =>
+			from definition in RowDefinitions
+			where !(definition is ISpacingDefinition)
+			select definition;
+
+		/// <summary>
+		/// Returns an enumerable of all the grid's column definitions, <u>excluding</u> spacing columns.
+		/// </summary>
+		public IEnumerable<ColumnDefinition> UserDefinedColumnDefinitions =>
+			from definition in ColumnDefinitions
+			where !(definition is ISpacingDefinition)
+			select definition;
+
 		#endregion Properties
 
 		#region Construction
@@ -43,44 +58,63 @@ namespace SpacedGridControl
 
 		#region Override methods
 
-		protected override void OnInitialized(EventArgs e)
+		protected override void OnVisualChildrenChanged(DependencyObject visualAdded, DependencyObject visualRemoved)
 		{
-			base.OnInitialized(e);
+			base.OnVisualChildrenChanged(visualAdded, visualRemoved);
 
 			UpdateSpacedRows();
 			UpdateSpacedColumns();
 
-			UpdateChildren();
+			if (visualAdded is UIElement element)
+				element.IsVisibleChanged += Element_IsVisibleChanged; // If the element isn't visible,
+																	  // we won't be able to get the row / column it's in,
+																	  // so we have to wait until it's visible,
+																	  // then immediately unbind the event handler.
 		}
 
 		protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e)
 		{
 			base.OnPropertyChanged(e);
 
-			if (e.Property.Name.Equals(nameof(RowDefinitions), StringComparison.OrdinalIgnoreCase))
-				UpdateSpacedRows();
-			else if (e.Property.Name.Equals(nameof(ColumnDefinitions), StringComparison.OrdinalIgnoreCase))
-				UpdateSpacedColumns();
-			else if (e.Property.Name.Equals(nameof(Children), StringComparison.OrdinalIgnoreCase))
-				UpdateChildren();
-			else if (e.Property.Name.Equals(nameof(RowSpacing), StringComparison.OrdinalIgnoreCase))
-				RecalculateRowSpacing();
-			else if (e.Property.Name.Equals(nameof(ColumnSpacing), StringComparison.OrdinalIgnoreCase))
-				RecalculateColumnSpacing();
+			switch (e.Property.Name)
+			{
+				case nameof(RowSpacing):
+					RecalculateRowSpacing();
+					break;
+
+				case nameof(ColumnSpacing):
+					RecalculateColumnSpacing();
+					break;
+			}
 		}
 
 		#endregion Override methods
+
+		#region Events
+
+		private void Element_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			var element = sender as UIElement;
+			element.IsVisibleChanged -= Element_IsVisibleChanged;
+
+			SetRow(element, GetRow(element) * 2); // 1 -> 2 or 2 -> 4
+			SetRowSpan(element, (GetRowSpan(element) * 2) - 1); // 2 -> 3 or 3 -> 5
+
+			SetColumn(element, GetColumn(element) * 2); // 1 -> 2 or 2 -> 4
+			SetColumnSpan(element, (GetColumnSpan(element) * 2) - 1); // 2 -> 3 or 3 -> 5
+		}
+
+		#endregion Events
 
 		#region Other methods
 
 		private void UpdateSpacedRows()
 		{
-			var userRowDefinitions = new List<RowDefinition>(); // User-defined rows (e.g. the ones defined in XAML files)
-			userRowDefinitions.AddRange(RowDefinitions.Where(x => !(x is ISpacingDefinition))); // Exclude spacing rows
-
+			var userRowDefinitions = UserDefinedRowDefinitions.ToList(); // User-defined rows (e.g. the ones defined in XAML files)
 			var actualRowDefinitions = new List<RowDefinition>(); // User-defined + spacing rows
 
-			int currentUserDefinition = 0, currentActualDefinition = 0;
+			int currentUserDefinition = 0,
+				currentActualDefinition = 0;
 
 			while (currentUserDefinition < userRowDefinitions.Count)
 			{
@@ -101,12 +135,11 @@ namespace SpacedGridControl
 
 		private void UpdateSpacedColumns()
 		{
-			var userColumnDefinitions = new List<ColumnDefinition>(); // User-defined columns (e.g. the ones defined in XAML files)
-			userColumnDefinitions.AddRange(ColumnDefinitions.Where(x => !(x is ISpacingDefinition))); // Exclude spacing columns
-
+			var userColumnDefinitions = UserDefinedColumnDefinitions.ToList(); // User-defined columns (e.g. the ones defined in XAML files)
 			var actualColumnDefinitions = new List<ColumnDefinition>(); // User-defined + spacing columns
 
-			int currentUserDefinition = 0, currentActualDefinition = 0;
+			int currentUserDefinition = 0,
+				currentActualDefinition = 0;
 
 			while (currentUserDefinition < userColumnDefinitions.Count)
 			{
@@ -123,25 +156,6 @@ namespace SpacedGridControl
 
 			ColumnDefinitions.Clear();
 			actualColumnDefinitions.ForEach(col => ColumnDefinitions.Add(col));
-		}
-
-		/// <summary>
-		/// Updates the following parameters of passed children, so they match the new Row and Column definitions:<br />
-		/// <c>Grid.Row</c><br />
-		/// <c>Grid.Column</c><br />
-		/// <c>Grid.RowSpan</c><br />
-		/// <c>Grid.ColumnSpan</c>
-		/// </summary>
-		private void UpdateChildren()
-		{
-			foreach (Control child in Children)
-			{
-				SetRow(child, GetRow(child) * 2); // 1 -> 2 or 2 -> 4
-				SetRowSpan(child, (GetRowSpan(child) * 2) - 1); // 2 -> 3 or 3 -> 5
-
-				SetColumn(child, GetColumn(child) * 2); // 1 -> 2 or 2 -> 4
-				SetColumnSpan(child, (GetColumnSpan(child) * 2) - 1); // 2 -> 3 or 3 -> 5
-			}
 		}
 
 		private void RecalculateRowSpacing()
